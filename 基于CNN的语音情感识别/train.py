@@ -3,9 +3,13 @@ from matplotlib import pyplot as plt
 
 from predict import model, x_train, y_train, x_val, y_val
 import keras
+import model_SVM_wrapper
 
 opt = optimizers.RMSprop(lr=0.0001, decay=1e-6)
-model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
+model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['acc'])
+
+# Wrap it in the ModelSVMWrapper
+wrapper = ModelSVMWrapper(model)
 
 callbacks_list = [
     keras.callbacks.EarlyStopping(
@@ -26,8 +30,12 @@ history = model.fit(x_train, y_train,
                     epochs=200,
                     validation_data=(x_val, y_val),
                     callbacks=callbacks_list)
+
+
 model.save('speech_mfcc_model.h5')
 model.save_weights('speech_mfcc_model_weight.h5')
+
+
 # 可视化训练结果：
 
 plt.plot(history.history['loss'])

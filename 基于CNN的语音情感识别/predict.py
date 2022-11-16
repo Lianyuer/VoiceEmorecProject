@@ -4,8 +4,11 @@ import numpy as np
 from keras import layers
 from keras import models
 from keras.utils import to_categorical
+import 基于CNN的语音情感识别.predict
 
 # 读取特征
+from 基于CNN的语音情感识别.model_SVM_wrapper import ModelSVMWrapper
+
 mfccs = {}
 with open('mfcc_feature_dict.pkl', 'rb') as f:
     mfccs = pickle.load(f)
@@ -100,6 +103,9 @@ print(y_val.shape)
 from keras.utils import plot_model
 from keras import regularizers
 
+
+# # Build a classical model
+# def build_model():
 model = models.Sequential()
 model.add(layers.Conv1D(256, 5, activation='relu', input_shape=(126, 1)))
 model.add(layers.Conv1D(128, 5, padding='same', activation='relu', kernel_regularizer=regularizers.l2(0.001)))
@@ -116,6 +122,17 @@ model.add(layers.Conv1D(256, 5, padding='same', activation='relu', kernel_regula
 model.add(layers.Dropout(0.2))
 model.add(layers.Flatten())
 model.add(layers.Dense(6, activation='softmax'))
+
+    # # The extra metric is important for the evaluate function
+    # model.compile(optimizer='rmsprop',
+    #               loss='categorical_crossentropy',
+    #               metrics=['accuracy'])
+    # return model
+
+
+# # Wrap it in the ModelSVMWrapper
+# wrapper = ModelSVMWrapper(model)
+
 
 plot_model(model, to_file='mfcc_model.png', show_shapes=True)
 model.summary()
